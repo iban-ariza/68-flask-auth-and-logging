@@ -126,7 +126,7 @@ def login():
         # check stored password hash against entered password hashed
         if check_password_hash(user.password, password):
             login_user(user)
-            return render_template("secrets.html")
+            return redirect(url_for("secrets"))
 
     return render_template("login.html")
 
@@ -137,7 +137,9 @@ def secrets():
     """
     @login_required - requires the user to be logged in, to access
     the secrets() function
+    current_user: is from the flask-login
     """
+    print(current_user.name)
     return render_template("secrets.html")
 
 
