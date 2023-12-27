@@ -85,16 +85,25 @@ def home():
 def register():
     # get from the form (with request.form)
     if request.method == "POST":
+        email = request.form.get('email')
+        result = db.session.execute(db.select(User).where(User.email == email))
+        user = result.scalar()
+        # if user exists
+        if user:
+            flash("The email provided already exists")
+            return redirect(url_for("login"))
+
         # technically we don't even want variables storing data
         password = request.form.get('password')
         hash_password = generate_password_hash(password,
                                                method='pbkdf2:sha256',
                                                salt_length=8)
-        new_user = User(
-            name=request.form.get('name'),
-            email=request.form.get('email'),
-            password=hash_password
+
+        new_user = User(name=request.form.get('name'),
+                        email=request.form.get('email'),
+                        password=hash_password
         )
+
         print(new_user.name, new_user.email, new_user.password)
         app.logger.info("Attempting to add a new user")
         db.session.add(new_user)
